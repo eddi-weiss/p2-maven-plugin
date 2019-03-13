@@ -45,3 +45,6 @@ target
 
 src/site/markdown/*.*
 category.xml
+/.classpath
+/.settings/
+/.project

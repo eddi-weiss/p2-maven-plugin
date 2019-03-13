@@ -26,6 +26,8 @@ import java.util.Collection;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.reficio.p2.bundler.ArtifactBundlerInstructions;
 import org.reficio.p2.logger.Logger;
@@ -59,9 +61,17 @@ public class FeatureBuilder {
 		try {
 			File featureContent = new File(destinationFolder, this.getFeatureFullName());
 			featureContent.mkdir();
+			File featureJarContent = p2FeatureDefintion.getFeatureJarContent();
+			if (featureJarContent != null && featureJarContent.exists()) {
+			   FileUtils.copyDirectory(featureJarContent, featureContent);
+			}
+			
 			Document xmlDoc = this.buildXml();
 			
 			XmlUtils.writeXml(xmlDoc, new File(featureContent, "feature.xml"));
+			
+            
+			
 			
 			File destJar = new File(destinationFolder, this.getFeatureFullName()+".jar");
 			JarUtils.createJar(featureContent, destJar);
@@ -198,10 +208,10 @@ public class FeatureBuilder {
 	}
 
 	Document fetchOrCreateXml() throws ParserConfigurationException, FileNotFoundException {
-		if (null == this.p2FeatureDefintion.getFeatureFile()) {
+		if (null == this.p2FeatureDefintion.getTemplateFile()) {
 			return DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
 		} else {
-			return XmlUtils.parseXml(new FileInputStream(this.p2FeatureDefintion.getFeatureFile()));
+			return XmlUtils.parseXml(new FileInputStream(this.p2FeatureDefintion.getTemplateFile()));
 		}
 	}
 
